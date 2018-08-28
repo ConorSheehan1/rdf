@@ -1,3 +1,4 @@
+require 'byebug'
 module RDF
   ##
   # An RDF graph.
@@ -74,6 +75,7 @@ module RDF
     # @return [Graph]
     # @since  0.1.7
     def self.load(url, graph_name: nil, **options, &block)
+      # byebug
       self.new(graph_name: graph_name, **options) do |graph|
         graph.load(url, graph_name: graph_name, **options)
 

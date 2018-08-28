@@ -12,6 +12,21 @@ describe RDF::Graph do
       expect_any_instance_of(described_class).to receive(:load).with("http://example/", graph_name: nil, base_uri: "http://example/")
       described_class.load("http://example/", base_uri: "http://example/")
     end
+
+    it "raises and error for language strings without a language set" do
+      expect(
+        described_class.load(@uri, base_uri: @uri, options: {permissive_lang_string:true})
+      ).to raise_error(ArgumentError, "datatype of rdf:langString requires a language")
+    end
+
+    context "when options[permissive_lang_string]=false" do
+      @uri = "http://dbpedia.org/resource/Elvis_Presley"
+      it "allows non-specified langStrings" do
+        expect(
+          described_class.load(@uri, base_uri: @uri, options: {permissive_lang_string:true})
+        ).not_to raise_error
+      end
+    end
   end
 
   context "as method" do

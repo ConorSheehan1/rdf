@@ -196,7 +196,10 @@ module RDF
     def self.open(filename, format: nil, **options, &block)
       # If we're the abstract reader, and we can figure out a concrete reader from format, use that.
       if self == RDF::Reader && format && reader = self.for(format)
-        return reader.open(filename, format: format, **options, &block)
+        return reader.open(
+          filename, format: format, 
+          permissive_lang_string: permissive_lang_string,
+          **options, &block)
       end
 
       # If we are a concrete reader class or format is not nil, set accept header from our content_types.
@@ -226,6 +229,8 @@ module RDF
 
         options[:encoding] ||= file.encoding if file.respond_to?(:encoding)
         options[:filename] ||= filename
+        # options[:strict] = false
+        options[:permissive_lang_string]=true
 
         if reader
           reader.new(file, options, &block)
@@ -279,6 +284,8 @@ module RDF
                    intern:        true,
                    prefixes:      Hash.new,
                    base_uri:      nil,
+                   permissive_lang_string: false,
+
                    **options,
                    &block)
 
@@ -289,7 +296,8 @@ module RDF
         canonicalize:   canonicalize,
         intern:         intern,
         prefixes:       prefixes,
-        base_uri:       base_uri
+        base_uri:       base_uri,
+        permissive_lang_string: permissive_lang_string
       })
 
       @input = case input

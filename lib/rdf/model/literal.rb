@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+require 'byebug'
 module RDF
   ##
   # An RDF literal.
@@ -105,7 +106,7 @@ module RDF
     ##
     # @private
     def self.new(value, language: nil, datatype: nil, lexical: nil, validate: false, canonicalize: false, **options)
-      raise ArgumentError, "datatype with language must be rdf:langString" if language && (datatype || RDF.langString).to_s != RDF.langString.to_s
+      raise ArgumentError, "datatype with language must be rdf:langString" if !options[:permissive_lang_string] && language && (datatype || RDF.langString).to_s != RDF.langString.to_s
 
       klass = case
         when !self.equal?(RDF::Literal)
@@ -171,7 +172,9 @@ module RDF
       @datatype = RDF::URI(datatype).freeze if datatype
       @datatype ||= self.class.const_get(:DATATYPE) if self.class.const_defined?(:DATATYPE)
       @datatype ||= @language ? RDF.langString : RDF::XSD.string
-      raise ArgumentError, "datatype of rdf:langString requires a language" if !@language && @datatype == RDF::langString
+      
+      byebug if !options[:permissive_lang_string] && !@language && @datatype == RDF::langString
+      raise ArgumentError, "datatype of rdf:langString requires a language" if !options[:permissive_lang_string] && !@language && @datatype == RDF::langString
     end
 
     ##
