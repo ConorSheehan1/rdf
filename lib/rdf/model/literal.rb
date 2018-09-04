@@ -105,6 +105,7 @@ module RDF
     ##
     # @private
     def self.new(value, language: nil, datatype: nil, lexical: nil, validate: false, canonicalize: false, **options)
+      raise ArgumentError, "datatype with language must be rdf:langString" if language && (datatype || RDF.langString).to_s != RDF.langString.to_s
 
       klass = case
         when !self.equal?(RDF::Literal)
@@ -361,7 +362,6 @@ module RDF
     def valid?
       return false if language? && language.to_s !~ /^[a-zA-Z]+(-[a-zA-Z0-9]+)*$/
       return false if datatype? && datatype.invalid?
-      return false if language? && !@language
       grammar = self.class.const_get(:GRAMMAR) rescue nil
       grammar.nil? || !!(value =~ grammar)
     end
