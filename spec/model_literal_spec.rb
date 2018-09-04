@@ -357,6 +357,15 @@ describe RDF::Literal do
         expect(RDF::Literal.new(*args)).not_to be_valid
       end
     end
+
+    context "when language? && !@language" do
+      langString = RDF::Literal.new("hello", datatype: RDF::langString)
+      it "should be invalid" do
+        expect(langString.language?).to be true
+        expect(!langString.instance_variable_get("@language")).to be true
+        expect(langString).not_to be_valid
+      end
+    end
   end
 
   describe "datatyped literal" do
