@@ -349,6 +349,7 @@ describe RDF::Literal do
 
     it "invalidates ['foo', datatype: 'rdf:langString']" do
       expect(RDF::Literal.new("foo", datatype: RDF::langString)).not_to be_valid
+      expect(RDF::Literal.new("foo", datatype: RDF::langString).valid?).to be false
     end
 
     it "invalidates ['foo', :language => 'en f']" do
